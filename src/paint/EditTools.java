@@ -10,14 +10,17 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -60,10 +63,13 @@ public class EditTools {
     public Text toolInfo = new Text();
     public ToggleButton selectTool;
     public ToggleButton moveTool;
+    public ToggleButton copyTool;
     ToggleButton[] toggleButtons;
     public ToggleGroup toggleGroup = new ToggleGroup();
     public Button zoomIn, zoomOut;
     public CheckBox autosaveBox;
+    public ToggleButton emojiTool;
+    public ComboBox emojiList;
     
     public GridPane toolsGrid = new GridPane();
     //EditTools
@@ -135,6 +141,10 @@ public class EditTools {
         Image polygonImg = new Image(getClass().getResourceAsStream("polygon.png"));
         ImageView polygonView = new ImageView(polygonImg);
         setToolSize(polygonView);
+        Image emojiImg = new Image(getClass().getResourceAsStream("laughcry.png"));
+       
+        ImageView emojiView = new ImageView(emojiImg);
+        setToolSize(emojiView);
         
         pencilTool = new ToggleButton("", freeView);
         lineTool = new ToggleButton("", lineView);
@@ -149,6 +159,7 @@ public class EditTools {
         undoTool = new Button("", undoView);
         redoTool = new Button("", redoView);
         textTool = new ToggleButton("", textView);
+        emojiTool = new ToggleButton("", emojiView);
         //Color Grabber/Dropper
         colorGrabberTool = new ToggleButton("", dropperView);
         autosaveBox = new CheckBox("Autosave");
@@ -157,8 +168,43 @@ public class EditTools {
         eraserTool = new ToggleButton("", eraserView);
         selectTool = new ToggleButton("", selectView);
         moveTool = new ToggleButton("", moveView);
-        ToggleButton[] tempButtons = {pencilTool, lineTool, rectangleTool, squareTool, ellipseTool, circleTool, textTool, colorGrabberTool, eraserTool, selectTool, moveTool, triangleTool, polygonTool};
-        toggleButtons = new ToggleButton[13];
+        copyTool = new ToggleButton("Copy");
+        ToggleButton[] tempButtons = {pencilTool, lineTool, rectangleTool, squareTool, ellipseTool, circleTool, textTool, colorGrabberTool, eraserTool, selectTool, moveTool, triangleTool, polygonTool, copyTool, emojiTool};
+        pencilTool.setTooltip(new Tooltip("Brush"));
+        lineTool.setTooltip(new Tooltip("Line"));
+        rectangleTool.setTooltip(new Tooltip("Rectangle"));
+        squareTool.setTooltip(new Tooltip("Square"));
+        ellipseTool.setTooltip(new Tooltip("Ellipse"));
+        circleTool.setTooltip(new Tooltip("Circle"));
+        textTool.setTooltip(new Tooltip("Text"));
+        colorGrabberTool.setTooltip(new Tooltip("Color Dropper"));
+        eraserTool.setTooltip(new Tooltip("Eraser"));
+        selectTool.setTooltip(new Tooltip("Select"));
+        moveTool.setTooltip(new Tooltip("Move"));
+        triangleTool.setTooltip(new Tooltip("Triangle"));
+        polygonTool.setTooltip(new Tooltip("Polygon"));
+        copyTool.setTooltip(new Tooltip("Copy"));
+        undoTool.setTooltip(new Tooltip("Undo"));
+        redoTool.setTooltip(new Tooltip("Redo"));
+        emojiTool.setTooltip(new Tooltip("Emoji"));
+        
+        emojiList = new ComboBox();
+        
+        Image laughcryEmo = new Image(getClass().getResourceAsStream("laughcry.png"));
+        Image smileEmo = new Image(getClass().getResourceAsStream("happy.png"));
+        Image cryEmo = new Image(getClass().getResourceAsStream("cry.png"));
+        ImageView laughcryView = new ImageView(laughcryEmo);
+        ImageView smileView = new ImageView(smileEmo);
+        ImageView cryView = new ImageView(cryEmo);
+        setToolSize(laughcryView);
+        setToolSize(smileView);
+        setToolSize(cryView);
+        emojiList.getItems().addAll(laughcryView, smileView, cryView);
+        emojiList.setValue(laughcryView);
+        emojiList.setPrefWidth(emojiList.getWidth() - 10);
+//        emojiList.setDisable(true);
+        
+        toggleButtons = new ToggleButton[15];
         for (int i = 0; i < toggleButtons.length; i++) {
             toggleButtons[i] = tempButtons[i];
         }
@@ -167,6 +213,7 @@ public class EditTools {
         for(ToggleButton t : toggleButtons){
             t.setToggleGroup(toggleGroup);
             t.setCursor(Cursor.HAND);
+           
         }
         drawTools.getItems().addAll(pencilTool, lineTool, rectangleTool, squareTool, ellipseTool, circleTool);
         toolsGrid.add(pencilTool, 0, 0);
@@ -209,9 +256,12 @@ public class EditTools {
         editToolsBox.getChildren().add(6, textTool);
         editToolsBox.getChildren().add(7, selectTool);
         editToolsBox.getChildren().add(8, moveTool);
-        editToolsBox.getChildren().add(9, zoomOut);
-        editToolsBox.getChildren().add(10, zoomIn);
-        editToolsBox.getChildren().add(11, autosaveBox);
+        editToolsBox.getChildren().add(9, copyTool);
+        editToolsBox.getChildren().add(10, emojiTool);
+        editToolsBox.getChildren().add(11, emojiList);
+        editToolsBox.getChildren().add(12, zoomOut);
+        editToolsBox.getChildren().add(13, zoomIn);
+        editToolsBox.getChildren().add(14, autosaveBox);
     }
     
     public void setToolSize(ImageView iView){

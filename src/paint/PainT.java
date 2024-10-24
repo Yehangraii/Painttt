@@ -78,6 +78,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import javax.imageio.ImageIO;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
 
 /**
  *
@@ -141,14 +142,14 @@ public class PainT extends Application{
     
     
     @Override
-    public void start(Stage stage) {
-         
+    public void start(Stage stage) throws IOException {
+         LoggerFunc();
         //Setting up the scene
         Scene scene = new Scene(myLayout, SCREEN_WIDTH, SCREEN_HEIGHT);
         scene.getStylesheets().add((PainT.class.getResource("stylesheet.css").toExternalForm())); //
         
         
-       
+        
         
         //Application funcionality and tools
         menu.createMenu(); //Creates the Menu Bar
@@ -169,7 +170,9 @@ public class PainT extends Application{
          editTool.autosaveBox.setOnAction(e->{
              if(editTool.autosaveBox.isSelected()){
                  autosave = new Autosave(10, this);
+                 autosave.setDaemon(true);
             autosave.start();
+            
              }
          });
             
@@ -286,6 +289,90 @@ public class PainT extends Application{
         stage.show();
     }
     
+    private static final Logger logger = Logger.getLogger(PainT.class.getName());
+    public void LoggerFunc() throws IOException{
+        // Construct a default FileHandler.
+      // "%t" denotes the system temp directory, kept in environment variable "tmp"
+      Handler fh = new FileHandler("D:/NetBeans Projects/PainT/src/paint/logger.log", true);  // append is true
+//    fh.setFormatter(new SimpleFormatter());  // Set the log format
+      // Add the FileHandler to the logger.
+      logger.addHandler(fh);
+      // Set the logger level to produce logs at this level and above.
+      logger.setLevel(Level.FINE);
+       
+    }
+    
+    public String selectedTool;
+    
+    private class LogSelection implements Runnable{
+        String toolLabel;
+        public LogSelection(String toolLabel){
+            this.toolLabel = toolLabel;
+        }
+
+        @Override
+        public void run() {
+            long startTimer = System.currentTimeMillis();
+            while(selectedTool.equals(toolLabel)){
+                try{
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PainT.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            long stopTimer = System.currentTimeMillis() - startTimer;
+            logger.info(toolLabel + " for " + stopTimer + " ms.");
+        }
+        
+        
+    }
+    
+    private class OpenLog implements Runnable{
+        String fileName;
+        public OpenLog(String fileName){
+            this.fileName = fileName;
+        }
+
+        @Override
+        public void run() {
+           
+            while(fileName == null){
+                try{
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PainT.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+           
+            logger.info(fileName + " opened.");
+        }
+        
+        
+    }
+    
+    private class SaveLog implements Runnable{
+        String fileName;
+        public SaveLog(String fileName){
+            this.fileName = fileName;
+        }
+
+        @Override
+        public void run() {
+           
+            while(fileName == null){
+                try{
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PainT.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+           
+            logger.info(fileName + " saved.");
+        }
+        
+        
+    }
+    
     //Canvas
     public Canvas canvas;
     public GraphicsContext globalGC;
@@ -350,6 +437,10 @@ public class PainT extends Application{
             
         });
         editTool.moveTool.setOnAction((ActionEvent event)->{
+            checkTrue();
+            
+        });
+        editTool.copyTool.setOnAction((ActionEvent event)->{
             checkTrue();
             
         });
@@ -424,31 +515,82 @@ public class PainT extends Application{
     public void checkTrue(){
         if(editTool.pencilTool.isSelected()){
             editTool.toolInfo.setText("Free line selected");
+            selectedTool = "Free line selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }else if(editTool.lineTool.isSelected()){
             editTool.toolInfo.setText("Line selected");
+            selectedTool = "Line selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }else if(editTool.rectangleTool.isSelected()){
             editTool.toolInfo.setText("Rectangle selected");
+            selectedTool = "Rectangle selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }
         else if(editTool.squareTool.isSelected()){
             editTool.toolInfo.setText("Square selected");
+            selectedTool = "Square selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }
         else if(editTool.ellipseTool.isSelected()){
             editTool.toolInfo.setText("Ellipse selected");
+            selectedTool = "Ellipse selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }
         else if(editTool.circleTool.isSelected()){
             editTool.toolInfo.setText("Circle selected");
+            selectedTool = "Circle selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }else if(editTool.eraserTool.isSelected()){
             editTool.toolInfo.setText("Eraser selected");
+            selectedTool = "Eraser selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }else if(editTool.selectTool.isSelected()){
             editTool.toolInfo.setText("Select Tool selected");
+            selectedTool = "Select Tool selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }else if(editTool.moveTool.isSelected()){
             editTool.toolInfo.setText("Move Tool selected");
+            selectedTool = "Move Tool selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
+        }else if(editTool.copyTool.isSelected()){
+            editTool.toolInfo.setText("Copy Tool selected");
+            selectedTool = "Copy Tool selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }else if(editTool.triangleTool.isSelected()){
             editTool.toolInfo.setText("Triangle Tool selected");
+            selectedTool = "Triangle selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }else if(editTool.polygonTool.isSelected()){
             editTool.toolInfo.setText("Polygon Tool selected");
+            selectedTool = "Polygon selected";
+            Thread logSelection = new Thread(new LogSelection(selectedTool));
+            logSelection.setDaemon(true);
+            logSelection.start();
         }else{
             editTool.toolInfo.setText("No Tool selected");
+            selectedTool = "No Tool selected";
         }
     }
     /**
@@ -632,6 +774,18 @@ public class PainT extends Application{
                 graphicsContext.setFill(Color.WHITE);
                 graphicsContext.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
                 }
+            }else if(editTool.copyTool.isSelected()){
+                if(selectedImg != null){
+                selectedImg.setX(e.getX());
+                selectedImg.setY(e.getY());
+                pane.getChildren().add(selectedImg);
+//                graphicsContext.setFill(Color.WHITE);
+//                graphicsContext.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+                }
+            }else if(editTool.emojiTool.isSelected()){
+                ImageView emoView = (ImageView)editTool.emojiList.getValue();
+                Image emo = emoView.getImage();
+                graphicsContext.drawImage(emo, e.getX(), e.getY(), 50, 50);
             }
            
         });
@@ -756,6 +910,12 @@ public class PainT extends Application{
                 selectedImg.setY(e.getY());
                 }
                 
+            }else if(editTool.copyTool.isSelected()){
+                if(selectedImg != null){
+                selectedImg.setX(e.getX());
+                selectedImg.setY(e.getY());
+                }
+                
             }
             
         });
@@ -808,6 +968,13 @@ public class PainT extends Application{
                     
                     paintTriangle();
                 }else if(editTool.moveTool.isSelected()){
+                    if(selectedImg != null){
+                    pane.getChildren().remove(selectedImg);
+                    
+                    graphicsContext.drawImage(selectedImg.getImage(), selectedImg.getX(), selectedImg.getY());
+                    selectedImg = null;
+                    }
+                }else if(editTool.copyTool.isSelected()){
                     if(selectedImg != null){
                     pane.getChildren().remove(selectedImg);
                     
@@ -1119,6 +1286,8 @@ public class PainT extends Application{
                 fileName = file.getName();          
                 fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1, file.getName().length());
                 System.out.println(">> fileExtension " + fileExtension);
+                Thread openLog = new Thread(new OpenLog(fileName));
+                openLog.start();
 //                tempImage = image;
                 iView = new ImageView();
                 iView.setImage(image);
@@ -1194,6 +1363,8 @@ public class PainT extends Application{
                         }
                     
                 }
+                Thread saveLog = new Thread(new SaveLog(outputFile.getName()));
+                saveLog.start();
             }
         };
         

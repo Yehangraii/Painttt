@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2019-10-14T20:41:28</date>
+  <millis>1571103688213</millis>
+  <sequence>0</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>19</thread>
+  <message>Line selected for 4002 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T20:41:36</date>
+  <millis>1571103696749</millis>
+  <sequence>1</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>20</thread>
+  <message>Square selected for 9004 ms.</message>
+</record>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2019-10-14T20:52:22</date>
+  <millis>1571104342918</millis>
+  <sequence>0</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>19</thread>
+  <message>Line selected for 7004 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T20:52:33</date>
+  <millis>1571104353185</millis>
+  <sequence>1</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>20</thread>
+  <message>Square selected for 11005 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T20:52:49</date>
+  <millis>1571104369326</millis>
+  <sequence>2</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$OpenLog</class>
+  <method>run</method>
+  <thread>23</thread>
+  <message>123.PNG opened.</message>
+</record>
+<record>
+  <date>2019-10-14T20:53:09</date>
+  <millis>1571104389509</millis>
+  <sequence>3</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$SaveLog</class>
+  <method>run</method>
+  <thread>24</thread>
+  <message>Yess.png saved.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2019-10-14T22:53:47</date>
+  <millis>1571111627081</millis>
+  <sequence>0</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>19</thread>
+  <message>Line selected for 3002 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:53:50</date>
+  <millis>1571111630243</millis>
+  <sequence>1</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>20</thread>
+  <message>Rectangle selected for 4002 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:53:55</date>
+  <millis>1571111635244</millis>
+  <sequence>2</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>21</thread>
+  <message>Square selected for 5002 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:53:56</date>
+  <millis>1571111636925</millis>
+  <sequence>3</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>22</thread>
+  <message>Ellipse selected for 2001 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:53:58</date>
+  <millis>1571111638113</millis>
+  <sequence>4</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>23</thread>
+  <message>Circle selected for 2001 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:54:00</date>
+  <millis>1571111640327</millis>
+  <sequence>5</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>24</thread>
+  <message>Triangle selected for 3001 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:54:00</date>
+  <millis>1571111640916</millis>
+  <sequence>6</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>25</thread>
+  <message>Line selected for 1000 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:54:06</date>
+  <millis>1571111646576</millis>
+  <sequence>7</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>26</thread>
+  <message>Ellipse selected for 6002 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:54:07</date>
+  <millis>1571111647128</millis>
+  <sequence>8</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>27</thread>
+  <message>Triangle selected for 1000 ms.</message>
+</record>
+<record>
+  <date>2019-10-14T22:54:07</date>
+  <millis>1571111647906</millis>
+  <sequence>9</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>28</thread>
+  <message>Square selected for 1001 ms.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2019-10-16T16:17:26</date>
+  <millis>1571260646051</millis>
+  <sequence>0</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>19</thread>
+  <message>Line selected for 5239 ms.</message>
+</record>
+<record>
+  <date>2019-10-16T16:17:44</date>
+  <millis>1571260664815</millis>
+  <sequence>1</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>20</thread>
+  <message>Rectangle selected for 18836 ms.</message>
+</record>
+<record>
+  <date>2019-10-16T16:17:49</date>
+  <millis>1571260669796</millis>
+  <sequence>2</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>21</thread>
+  <message>Circle selected for 5041 ms.</message>
+</record>
+<record>
+  <date>2019-10-16T16:18:10</date>
+  <millis>1571260690961</millis>
+  <sequence>3</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>23</thread>
+  <message>Triangle selected for 2116 ms.</message>
+</record>
+<record>
+  <date>2019-10-16T16:18:10</date>
+  <millis>1571260690969</millis>
+  <sequence>4</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>22</thread>
+  <message>Triangle selected for 21181 ms.</message>
+</record>
+<record>
+  <date>2019-10-16T16:18:12</date>
+  <millis>1571260692912</millis>
+  <sequence>5</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>24</thread>
+  <message>Line selected for 2015 ms.</message>
+</record>
+<record>
+  <date>2019-10-16T16:18:20</date>
+  <millis>1571260700579</millis>
+  <sequence>6</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>25</thread>
+  <message>Free line selected for 7755 ms.</message>
+</record>
+<record>
+  <date>2019-10-16T16:18:47</date>
+  <millis>1571260727887</millis>
+  <sequence>7</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>26</thread>
+  <message>Move Tool selected for 27399 ms.</message>
+</record>
+<record>
+  <date>2019-10-16T16:18:47</date>
+  <millis>1571260727965</millis>
+  <sequence>8</sequence>
+  <logger>paint.PainT</logger>
+  <level>INFO</level>
+  <class>paint.PainT$LogSelection</class>
+  <method>run</method>
+  <thread>27</thread>
+  <message>Move Tool selected for 7858 ms.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+</log>
