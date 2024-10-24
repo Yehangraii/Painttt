@@ -3,13 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/NetBeans%20Projects/PainT/src/paint/LogSelection.java</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/EditTools.java</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/ConfirmExit.java</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/Autosave.java</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/PainT.java</file>
-            <file>file:/D:/NetBeans%20Projects/PainT/test/paint/PainTTest.java</file>
+            <file>file:/D:/NetBeans%20Projects/PainT/src/paint/Draw.java</file>
+            <file>file:/D:/NetBeans%20Projects/PainT/src/paint/stylesheet.css</file>
+            <file>file:/D:/NetBeans%20Projects/PainT/src/paint/OpenSave.java</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/CreateMenuBar.java</file>
-            <file>file:/D:/NetBeans%20Projects/PainT/test/paint/EditToolsTest.java</file>
+            <file>file:/D:/NetBeans%20Projects/PainT/src/paint/CheckSelected.java</file>
         </group>
     </open-files>
 </project-private>

@@ -1,5 +1,29 @@
 Release Notes:
 
+v1.5
+New Features
+- The program can copy-paste a selected piece of the image. 
+- Has hovering tool tips. Also, indicates which tool is selected.
+- The software logs which feature is selected and tracks how long it was selected when a switch occurs. This is handled by thread.
+- The software logs which files are opened and saved.  This is handled by thread.
+- "Invent a feature". The application has emoji button and a emoji combo box which has list of emojis that the user can draw on the canvas when clicked. 
+
+Improvements
+- N/A
+
+Fixes:
+- N/A
+
+Known Issues
+- N/A
+
+Next Step:
+- Re-structure the code to make it cleaner
+- Polish and stylize the application
+
+
+
+
 v1.4
 New Features
 - The code has 3 unit tests. 

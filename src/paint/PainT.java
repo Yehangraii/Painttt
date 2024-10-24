@@ -86,6 +86,9 @@ import java.util.logging.FileHandler;
  */
 public class PainT extends Application{
     
+    /**
+     *
+     */
     public PainT(){
         
     }
@@ -99,72 +102,64 @@ public class PainT extends Application{
     
     //Layouts
     private VBox myLayout = new VBox(10);
-    
-    
-    private ImageView iView;
+ 
+    /**
+     *
+     */
+    public ImageView iView;
     
     //FileChooser
     FileChooser fileChooser = new FileChooser();
     File outputFile;
-    
-    
-    
+ 
     //ScrollBar
     private ScrollPane scroll = new ScrollPane();
-  
-//    DrawingFunc drawingFunc;
-    
-    
+//    DrawingFunc drawingFunc
     CreateMenuBar menu = new CreateMenuBar();
     EditTools editTool = new EditTools();
+
+    /**
+     *
+     */
     public StackPane canvasPane = new StackPane();
     
     Thread autosave;
+    OpenSave os;
+    Draw draw;
     
     
-//    public static void addThreadsToPool(){
-//        ScheduledThreadPoolExecutor eventsPool = new ScheduledThreadPoolExecutor(3);
-//        
-//        eventsPool.scheduleAtFixedRate(new Autosave(10, new PainT()), 0, 2, TimeUnit.SECONDS);
-//        
-//        System.out.println("Number of threads " + Thread.activeCount());
-//        
-//        Thread[] listOfThread = new Thread[Thread.activeCount()];
-//        Thread.enumerate(listOfThread);
-//        
-//        for(Thread i : listOfThread){
-//            System.out.println(i.getName());
-//            System.out.println(i.getPriority());
-//        }
-////        
-////        listOfThread[6].setPriority(8);
-//    }
-    
-    
+    CheckSelected cS;
+//    DrawingFunc dF;
     @Override
-    public void start(Stage stage) throws IOException {
-         LoggerFunc();
+    public void start(Stage stage) throws IOException { 
+        LoggerFunc();
         //Setting up the scene
         Scene scene = new Scene(myLayout, SCREEN_WIDTH, SCREEN_HEIGHT);
         scene.getStylesheets().add((PainT.class.getResource("stylesheet.css").toExternalForm())); //
         
         
-        
+        os = new OpenSave(this);
+        draw = new Draw(this);
         
         //Application funcionality and tools
         menu.createMenu(); //Creates the Menu Bar
         editTool.editTool(); //Contains tools such as color picker and brush width
         
-        eventHandler(stage); //Handles the Menu Item clicks
-        
+        os.eventHandler(stage); //Handles the Menu Item clicks
+       
         ///SmartSaves
         stage.setOnCloseRequest(e->{
             e.consume();
             closeProgram(stage, ConfirmExit.display("PainT", "Do you want to save changes?"));
         });
 //        drawingFunc = new DrawingFunc(editTool, graphicsContext,canvas , pane, startX, startY, endX, endY, undoStack);
+cS = new CheckSelected(editTool, this);
         canvasFunc();
+        
         pane = new Pane(canvas);
+//        dF = new DrawingFunc(this);
+//        dF.dLine();
+        dLine();
         
       
          editTool.autosaveBox.setOnAction(e->{
@@ -186,9 +181,37 @@ public class PainT extends Application{
         ObservableList<Double> canvasPoints = FXCollections.observableArrayList();
         canvasPoints.addAll(canvas.getWidth(), canvas.getHeight());
                 
+        textTool();
+        polyTool();
         
+        editTool.selectTool.setOnAction(e->{
+            selectTrue = !selectTrue;      
+        });
+     
+        zoomInOut();
+        //Setting the basic layout 
+        myLayout.getChildren().add(0,menu.menuBox); 
+        myLayout.getChildren().add(1,editTool.editToolsBox);
         
-        editTool.textTool.setOnAction(e->{
+        myLayout.getChildren().add(2,canvasPane);
+        myLayout.getChildren().add(3,scroll);
+        myLayout.getChildren().add(4, editTool.infoBar);
+        pane.getChildren().addAll(createControlAnchorsFor(canvasPoints));
+//        myLayout.getChildren().add(4, stackPane);
+        //ScrollBar
+        scroll.setStyle("-fx-background-insets: 0;");
+        scroll.setContent(pane);
+    
+        stage.setTitle("PainT");
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    /**
+     *
+     */
+    public void textTool(){
+         editTool.textTool.setOnAction(e->{
             editTool.toolInfo.setText("Text Tool selected");
             canvas.setOnMouseClicked(point->{
                 Stage textStage = new Stage();
@@ -207,9 +230,12 @@ public class PainT extends Application{
                 textStage.showAndWait();       
             });
         });
-        
-        
-        
+    }
+    
+    /**
+     *
+     */
+    public void polyTool(){
         editTool.polygonTool.setOnAction(e->{
             editTool.toolInfo.setText("Polygon Tool selected");
             
@@ -229,33 +255,12 @@ public class PainT extends Application{
                 textStage.showAndWait();       
             
         });
-       
-        editTool.selectTool.setOnAction(e->{
-            selectTrue = !selectTrue;      
-        });
-        
-        /*editTool.moveTool.setOnAction(e->{
-            moveTrue = !moveTrue;
-            if(moveTrue){
-                  Image tempImage = canvas.snapshot(null, null);
-            PixelReader pR = tempImage.getPixelReader();
-            int wid = (int)endX - startX;
-        int hei = (int)endY - startY;
-	
-        
-        int[] pixels = new int[wid * hei];
-        WritablePixelFormat<IntBuffer> wpf = WritablePixelFormat.getIntArgbInstance();
-        pR.getPixels(startX, startY, wid, hei, wpf, pixels, 0, wid);
-        
-        WritableImage outputImage = new WritableImage(wid, hei);
-	
-	PixelWriter pixelWriter = outputImage.getPixelWriter();
-        pixelWriter.setPixels(startX, startY, wid, hei, wpf, pixels, 0, wid);
-        
-        graphicsContext.drawImage(outputImage, 0, 0, outputImage.getWidth(), outputImage.getHeight());
-            }
-        });*/
-        
+    }
+    
+    /**
+     *
+     */
+    public void zoomInOut(){
         editTool.zoomIn.setOnAction(e->{
             canvas.setScaleX(canvas.getScaleX() * 2);
             canvas.setScaleY(canvas.getScaleY() * 2);
@@ -264,32 +269,15 @@ public class PainT extends Application{
         editTool.zoomOut.setOnAction(e->{
             canvas.setScaleX(canvas.getScaleX() / 2);
             canvas.setScaleY(canvas.getScaleY() / 2);
-        });
-        
-  
-        //Setting the basic layout 
-        myLayout.getChildren().add(0,menu.menuBox); 
-        myLayout.getChildren().add(1,editTool.editToolsBox);
-        
-        myLayout.getChildren().add(2,canvasPane);
-        myLayout.getChildren().add(3,scroll);
-        myLayout.getChildren().add(4, editTool.infoBar);
-        pane.getChildren().addAll(createControlAnchorsFor(canvasPoints));
-//        myLayout.getChildren().add(4, stackPane);
-        //ScrollBar
-        scroll.setStyle("-fx-background-insets: 0;");
-        scroll.setContent(pane);
-        
-        
-        
-       
-        
-        stage.setTitle("PainT");
-        stage.setScene(scene);
-        stage.show();
+        });    
     }
     
     private static final Logger logger = Logger.getLogger(PainT.class.getName());
+
+    /**
+     *
+     * 
+     */
     public void LoggerFunc() throws IOException{
         // Construct a default FileHandler.
       // "%t" denotes the system temp directory, kept in environment variable "tmp"
@@ -302,33 +290,16 @@ public class PainT extends Application{
        
     }
     
-    public String selectedTool;
-    
-    private class LogSelection implements Runnable{
-        String toolLabel;
-        public LogSelection(String toolLabel){
-            this.toolLabel = toolLabel;
-        }
-
-        @Override
-        public void run() {
-            long startTimer = System.currentTimeMillis();
-            while(selectedTool.equals(toolLabel)){
-                try{
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(PainT.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            long stopTimer = System.currentTimeMillis() - startTimer;
-            logger.info(toolLabel + " for " + stopTimer + " ms.");
-        }
-        
-        
-    }
-    
-    private class OpenLog implements Runnable{
+    /**
+     *
+     */
+    public class OpenLog implements Runnable{
         String fileName;
+
+        /**
+         *
+         * @param fileName
+         */
         public OpenLog(String fileName){
             this.fileName = fileName;
         }
@@ -345,13 +316,45 @@ public class PainT extends Application{
             }
            
             logger.info(fileName + " opened.");
-        }
-        
-        
+        }   
     }
     
-    private class SaveLog implements Runnable{
+    /**
+     *
+     * 
+     */
+    public void oThread(String fileName){
+        Thread openLog = new Thread(new OpenLog(fileName));
+        openLog.start();
+    }
+    
+    /**
+     *
+     */
+    public void sThread(){
+        autosave.interrupt();
+        autosave = new Autosave(10, PainT.this);
+        autosave.start();
+    }
+    
+    /**
+     *
+     */
+    public void slThread(){
+        Thread saveLog = new Thread(new PainT.SaveLog(outputFile.getName()));
+                saveLog.start();
+    }
+    
+    /**
+     *
+     */
+    public class SaveLog implements Runnable{
         String fileName;
+
+        /**
+         *
+         * @param fileName = Name of the file
+         */
         public SaveLog(String fileName){
             this.fileName = fileName;
         }
@@ -374,82 +377,116 @@ public class PainT extends Application{
     }
     
     //Canvas
+
+    /**
+     *
+     */
     public Canvas canvas;
+
+    /**
+     *
+     */
     public GraphicsContext globalGC;
+
+    /**
+     *
+     */
     public GraphicsContext graphicsContext;
+
+    /**
+     *
+     */
     public double CANVAS_WIDTH = 1100;
+
+    /**
+     *
+     */
     public double CANVAS_HEIGHT = 750;
     private Canvas layer = new Canvas();
     
+    /**
+     *
+     */
+    public int startX,
+
+    /**
+     *
+     */
+    startY,
+
+    /**
+     *
+     */
+    endX,
+
+    /**
+     *
+     */
+    endY;
     
-    
-    public int startX;
-    public int startY;
-    public int endX;
-    public int endY;
-    
+    /**
+     *
+     */
     public Stack undoStack = new Stack();
+
+    /**
+     *
+     */
     public Stack redoStack = new Stack();
     
+    /**
+     *
+     */
     public void canvasFunc(){
         createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT); //Creates a canvas
         
-        //Booleans to check which drawing tool is selected
-        /*
-        freeLineTrue = shapesBool[0];
-        lineTrue = shapesBool[1];
-        rectangleTrue = shapesBool[2];
-        squareTrue = shapesBool[3];
-        ellipseTrue = shapesBool[4];
-        circleTrue = shapesBool[5];*/
-        dLine();
-        checkTrue();
+        cS.checkTrue();
         editTool.pencilTool.setOnAction((ActionEvent event) -> {
-            checkTrue();
+            cS.checkTrue();
         });
         
         editTool.lineTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
             
         });
         editTool.rectangleTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
         editTool.squareTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
         editTool.ellipseTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
         });
         editTool.circleTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
         editTool.eraserTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
         editTool.selectTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
         editTool.moveTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
         editTool.copyTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
         editTool.triangleTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
         editTool.polygonTool.setOnAction((ActionEvent event)->{
-            checkTrue();
+            cS.checkTrue();
             
         });
        Image tempImge = canvas.snapshot(null, null);
@@ -485,114 +522,18 @@ public class PainT extends Application{
         });
     }
     
+    /**
+     *
+     * @param selectedTool = Tool that's selected
+     */
+    public void tLogS(String selectedTool){
+            Thread logSelection = new Thread(new LogSelection(selectedTool, logger, cS));
+            logSelection.setDaemon(true);
+            logSelection.start();
+    }
 
     
-    public void setBool(int index){
-        shapesBool[index] = !shapesBool[index];
-        for (int i = 0; i < shapesBool.length; i++) {
-            if(i != index){
-                shapesBool[i] = false;
-            }
-        }
-        
-        freeLineTrue = shapesBool[0];
-        lineTrue = shapesBool[1];
-        rectangleTrue = shapesBool[2];
-        squareTrue = shapesBool[3];
-        ellipseTrue = shapesBool[4];
-        circleTrue = shapesBool[5];
-        eraserTrue = shapesBool[6];
-        if(selectTrue)
-            selectTrue = false;
-        if(moveTrue)
-            moveTrue = false;
-        checkTrue();
-    }
-    
-    /**
-     * Shows which tool is selected based on the toggle selects of the buttons.
-     */
-    public void checkTrue(){
-        if(editTool.pencilTool.isSelected()){
-            editTool.toolInfo.setText("Free line selected");
-            selectedTool = "Free line selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else if(editTool.lineTool.isSelected()){
-            editTool.toolInfo.setText("Line selected");
-            selectedTool = "Line selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else if(editTool.rectangleTool.isSelected()){
-            editTool.toolInfo.setText("Rectangle selected");
-            selectedTool = "Rectangle selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }
-        else if(editTool.squareTool.isSelected()){
-            editTool.toolInfo.setText("Square selected");
-            selectedTool = "Square selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }
-        else if(editTool.ellipseTool.isSelected()){
-            editTool.toolInfo.setText("Ellipse selected");
-            selectedTool = "Ellipse selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }
-        else if(editTool.circleTool.isSelected()){
-            editTool.toolInfo.setText("Circle selected");
-            selectedTool = "Circle selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else if(editTool.eraserTool.isSelected()){
-            editTool.toolInfo.setText("Eraser selected");
-            selectedTool = "Eraser selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else if(editTool.selectTool.isSelected()){
-            editTool.toolInfo.setText("Select Tool selected");
-            selectedTool = "Select Tool selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else if(editTool.moveTool.isSelected()){
-            editTool.toolInfo.setText("Move Tool selected");
-            selectedTool = "Move Tool selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else if(editTool.copyTool.isSelected()){
-            editTool.toolInfo.setText("Copy Tool selected");
-            selectedTool = "Copy Tool selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else if(editTool.triangleTool.isSelected()){
-            editTool.toolInfo.setText("Triangle Tool selected");
-            selectedTool = "Triangle selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else if(editTool.polygonTool.isSelected()){
-            editTool.toolInfo.setText("Polygon Tool selected");
-            selectedTool = "Polygon selected";
-            Thread logSelection = new Thread(new LogSelection(selectedTool));
-            logSelection.setDaemon(true);
-            logSelection.start();
-        }else{
-            editTool.toolInfo.setText("No Tool selected");
-            selectedTool = "No Tool selected";
-        }
-    }
+
     /**
      * Takes in width and height and creates a canvas
      * @param width Canvas's width
@@ -612,39 +553,115 @@ public class PainT extends Application{
                 0,              //y of the upper left corner
                 width,    //width of the rectangle
                 height);  //height of the rectangle
-        
-         
-       
     }
     
-    
+    /**
+     *
+     */
     public boolean freeLineTrue = false;
+
+    /**
+     *
+     */
     public boolean lineTrue = false;
+
+    /**
+     *
+     */
     public boolean rectangleTrue = false;
+
+    /**
+     *
+     */
     public boolean squareTrue = false;
+
+    /**
+     *
+     */
     public boolean ellipseTrue = false;
+
+    /**
+     *
+     */
     public boolean circleTrue = false;
+
+    /**
+     *
+     */
     public boolean eraserTrue = false;
+
+    /**
+     *
+     */
     public boolean[] shapesBool = new boolean[7];
+
+    /**
+     *
+     */
     public boolean selectTrue = false;
+
+    /**
+     *
+     */
     public boolean moveTrue = false;
     
-    
+    /**
+     *
+     */
     public Pane pane;
     
+    /**
+     *
+     */
     public Rectangle rectangle;
+
+    /**
+     *
+     */
     public Rectangle square;
+
+    /**
+     *
+     */
     public Ellipse ellipse;
+
+    /**
+     *
+     */
     public Ellipse circle;
+
+    /**
+     *
+     */
     public Polygon triangle;
+
+    /**
+     *
+     */
     public Polygon polygon;
+
+    /**
+     *
+     */
     public double[] points;
+
+    /**
+     *
+     */
     public double[] pointsY;
+
+    /**
+     *
+     */
     public int count = 0;
     
     ImageView selectedImg;
      int numberOfSides;
     //Brush
+
+    /**
+     *
+     */
     public void dLine(){
         graphicsContext = canvas.getGraphicsContext2D();
         
@@ -937,36 +954,45 @@ public class PainT extends Application{
 //                graphicsContext.closePath();
                 endX = (int)e.getX();
                 endY = (int)e.getY();
-                paintLine();
+                draw.paintLine();
             }
             else{
                 endX = (int)e.getX();
                 endY = (int)e.getY();
                 System.out.println("Mouse Released");
                 if(editTool.lineTool.isSelected()){
-                    paintLine();
+                    draw.paintLine();
                 }else if(editTool.rectangleTool.isSelected()){
+                    draw.paintRect();
                     pane.getChildren().remove(rectangle);
-                    paintRect();
+                    
                 }else if(editTool.squareTool.isSelected()){
+                    draw.paintSquare();
                     pane.getChildren().remove(square);
-                    paintSquare();
+                    
                 }else if(editTool.ellipseTool.isSelected()){
-                    paintEllipse();
+                    draw.paintEllipse();
                     pane.getChildren().remove(ellipse);
                     
                 }else if(editTool.circleTool.isSelected()){
-                    paintCircle();
+                    draw.paintCircle();
                     pane.getChildren().remove(circle);
                     
                 }else if(editTool.selectTool.isSelected()){
                     
-                    selectRect();
+                    draw.selectRect();
+                    Image imgToMove = (Image)undoStack.peek();
+        PixelReader pR = imgToMove.getPixelReader();
+        WritableImage newImg = new WritableImage(pR, startX, startY, (int)rectangle.getWidth(), (int)rectangle.getHeight());
+        selectedImg = new ImageView(newImg);
+        selectedImg.setX(rectangle.getX());
+        selectedImg.setY(rectangle.getY());
                     pane.getChildren().remove(rectangle);
                 }else if(editTool.triangleTool.isSelected()){
+                    draw.paintTriangle();
                     pane.getChildren().remove(triangle);
                     
-                    paintTriangle();
+                    
                 }else if(editTool.moveTool.isSelected()){
                     if(selectedImg != null){
                     pane.getChildren().remove(selectedImg);
@@ -1000,164 +1026,23 @@ public class PainT extends Application{
 
     }
    
+    /**
+     *
+     */
     public void colorGrabber(){
         
     }
     Line line;
     
     
-    
-    private void paintTriangle(){
-        double tempX;
-        double tempY;
-        if(endX - startX >= 0){
-            tempX = endX - startX;
-        }else{
-            tempX = startX - endX;
-//            startX = endX;
-        }
-        if(endY - startY >= 0){
-            tempY = endY - startY;
-        }else{
-            tempY = startY - endY;
-//            startY = endY;
-        }
-        
-        graphicsContext.strokePolygon(new double[]{startX, startX, triangle.getPoints().get(4)}, new double[]{startY, triangle.getPoints().get(3), triangle.getPoints().get(5)}, 3);
-        graphicsContext.fillPolygon(new double[]{startX, startX, triangle.getPoints().get(4)}, new double[]{startY, triangle.getPoints().get(3), triangle.getPoints().get(5)}, 3);
-    }
-    
-    private void paintLine(){
-        graphicsContext = canvas.getGraphicsContext2D();
-        /*Canvas tempCanvas = new Canvas();
-        graphicsContext = canvas.getGraphicsContext2D();
-        GraphicsContext tempGc = graphicsContext;
-//        
-//        graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-//        graphicsContext.fillRect(0,0,canvas.getWidth(),canvas.getHeight());
-        
-        graphicsContext.setStroke(editTool.colorPicker.getValue());
-        graphicsContext.setLineWidth(editTool.lineWidth);
-        graphicsContext.strokeLine(startX, startY, endX, endY);
-        graphicsContext = tempGc;*/
-        
-       graphicsContext.strokeLine(startX, startY, endX, endY);
-        
-    }
-    
-    /**
-     * Strokes and fills the rectangle using the coordinates.
-     * @param startX is the x-origin
-     * @param startY is the y-origin
-     * @param endX is the width minus the startX
-     * @param endY is the height minus the start Y
-     */
-    public void paintRect(){
-        double tempX;
-        double tempY;
-        if(endX - startX >= 0){
-            tempX = endX - startX;
-        }else{
-            tempX = startX - endX;
-            startX = endX;
-        }
-        if(endY - startY >= 0){
-            tempY = endY - startY;
-        }else{
-            tempY = startY - endY;
-            startY = endY;
-        }
-        
-        graphicsContext.strokeRect(startX, startY, tempX, tempY);
-        graphicsContext.fillRect(startX, startY, tempX, tempY);
-    }
-    
-     /**
-     * Strokes and fills the square using the coordinates.
-     * @param startX is the x-origin
-     * @param startY is the y-origin
-     * @param endX is the width minus the startX
-     * @param endY is the height minus the start Y
-     */
-    public void paintSquare(){
-        double tempX;
-        
-        if(endX - startX >= 0){
-            tempX = endX - startX;
-        }else{
-            tempX = startX - endX;
-            startX = endX;
-        }
-        
-        graphicsContext.strokeRect(startX, startY, tempX, tempX);
-        graphicsContext.fillRect(startX, startY, tempX, tempX);
-    }
-    public void paintEllipse(){
-        double tempX;
-        double tempY;
-        if(endX - startX >= 0){
-            tempX = endX - startX;
-        }else{
-            tempX = startX - endX;
-//            startX = endX;
-        }
-        if(endY - startY >= 0){
-            tempY = endY - startY;
-        }else{
-            tempY = startY - endY;
-//            startY = endY;
-        }
-        graphicsContext.strokeOval(startX - ellipse.getRadiusX(), startY - ellipse.getRadiusY(), tempX + ellipse.getRadiusX(), tempY + ellipse.getRadiusY());
-        graphicsContext.fillOval(startX - ellipse.getRadiusX(), startY - ellipse.getRadiusY(), tempX + ellipse.getRadiusX(), tempY + ellipse.getRadiusY());
-    }
-    public void paintCircle(){
-        double tempX;
-        double tempRadius = circle.getRadiusX();
-        if(endX - startX >= 0){
-            tempX = endX - startX;
-        }else{
-            tempX = startX - endX;
-//            startX = endX;
-        }
-        graphicsContext.strokeOval(startX - tempRadius, startY - tempRadius, tempX + tempRadius, tempX + tempRadius);
-        graphicsContext.fillOval(startX - tempRadius, startY - tempRadius, tempX + tempRadius, tempX + tempRadius);
-        
-    }
-    
-    
-     /**
-     * Selects the part of the image using a rectangle
-     * @param startX is the x-origin
-     * @param startY is the y-origin
-     * @param endX is the width minus the startX
-     * @param endY is the height minus the start Y
-     */
-    public void selectRect(){
-        double tempX;
-        double tempY;
-        if(endX - startX >= 0){
-            tempX = endX - startX;
-        }else{
-            tempX = startX - endX;
-            startX = endX;
-        }
-        if(endY - startY >= 0){
-            tempY = endY - startY;
-        }else{
-            tempY = startY - endY;
-            startY = endY;
-        }
-        
- 
-        Image imgToMove = (Image)undoStack.peek();
-        PixelReader pR = imgToMove.getPixelReader();
-        WritableImage newImg = new WritableImage(pR, startX, startY, (int)rectangle.getWidth(), (int)rectangle.getHeight());
-        selectedImg = new ImageView(newImg);
-        selectedImg.setX(rectangle.getX());
-        selectedImg.setY(rectangle.getY());
-    }
+  
     
     // @return a list of anchors which can be dragged around to modify points in the format [x1, y1, x2, y2...]
+
+    /**
+     *
+     *
+     */
     public ObservableList<Anchor> createControlAnchorsFor(final ObservableList<Double> points) {
     ObservableList<Anchor> anchors = FXCollections.observableArrayList();
 
@@ -1254,240 +1139,17 @@ public class PainT extends Application{
     private class Delta { double x, y; }
   }
   
-    public String fileName;
-    public String fileExtension;
-    public String saveFileName;
+    /**
+     *
+     */
     public String saveFileExtension;
-    public EventHandler<ActionEvent> saveClick;
     
     /**
-     * Handles all the events for open, save and save as. 
-     * @param stage Takes in input the current stage.
+     *
+     * @param stage
+     * @param display
      */
-    //EventHandler for menu
-    public void eventHandler(Stage stage){
-        FileChooser.ExtensionFilter extJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
-                FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
-                FileChooser.ExtensionFilter extGIF = new FileChooser.ExtensionFilter("GIF files (*.gif)", "*.gif");
-                FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*.*");
-                fileChooser.getExtensionFilters().addAll(allFilter, extJPG, extPNG, extGIF);
-        //Handles the event when the user presses Open File.
-        EventHandler<ActionEvent> openClick = new EventHandler<ActionEvent>() {
-            @Override 
-            public void handle(final ActionEvent e){
-                
-                
-                File file = fileChooser.showOpenDialog(stage);
-                try {
-                    
-                BufferedImage bImage = ImageIO.read(file); //Reading the file
-                
-                Image image = SwingFXUtils.toFXImage(bImage, null);
-                fileName = file.getName();          
-                fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1, file.getName().length());
-                System.out.println(">> fileExtension " + fileExtension);
-                Thread openLog = new Thread(new OpenLog(fileName));
-                openLog.start();
-//                tempImage = image;
-                iView = new ImageView();
-                iView.setImage(image);
-                iView.setFitWidth(200);
-                
-                iView.setPreserveRatio(true);
-               
-                Image tempImage = iView.getImage();
-                
-                globalGC.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-                
-                globalGC.fillRect(0,0,tempImage.getWidth(),tempImage.getHeight());
-                canvas.setWidth(tempImage.getWidth());
-                canvas.setHeight(tempImage.getHeight());
-                globalGC.drawImage(tempImage, 0, 0, tempImage.getWidth(), tempImage.getHeight());
-            
-                
-             
-                System.out.println("Image opened successfully!");
-            } catch (IOException ex) {
-                System.out.println("Error in opening");
-            }
-            }
-        };
-        
-        //saveClick
-        saveClick = new EventHandler<ActionEvent>(){
-            
-            @Override
-            public void handle(final ActionEvent e){
-                if(outputFile != null){
-                WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
-                canvas.snapshot(null, writableImage);
-                
-                try{
-                    ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), saveFileName, outputFile);
-                    autosave.interrupt();
-                    autosave = new Autosave(10, PainT.this);
-                    autosave.start();
-                }catch(IOException ex){
-                    System.out.println("Error in saving");
-                }  
-                
-                }else{                  
-//                    FileChooser.ExtensionFilter extJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
-//                    FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
-//                    FileChooser.ExtensionFilter extGIF = new FileChooser.ExtensionFilter("GIF files (*.gif)", "*.gif");
-//                    fileChooser.getExtensionFilters().addAll(extPNG, extJPG, extGIF);
-                    outputFile = fileChooser.showSaveDialog(stage);
-                    WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
-                    canvas.snapshot(null, writableImage);
-
-                    try {
-                            saveFileName = outputFile.getName();          
-                            saveFileExtension = saveFileName.substring(saveFileName.lastIndexOf(".") + 1, outputFile.getName().length());
-                            
-                            if(saveFileExtension.equals(fileExtension)){
-                            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), saveFileExtension, outputFile);
-                            System.out.println(">> SavefileExtension " + saveFileExtension);
-                            }else{
-                              
-                               
-                                saveWarning(stage, ConfirmExit.display("WARNING", "WARNING:\nData loss can happen\nDo you want to save?"));
-                                System.out.println(">> SavefileExtension " + saveFileExtension);
-                            }
-                            if(autosave != null){
-                            autosave.interrupt();
-                            autosave = new Autosave(10, PainT.this);
-                            autosave.start();
-                            }
-                        } catch (IOException ex) {
-                            System.out.println("Error in saving as");
-                        }
-                    
-                }
-                Thread saveLog = new Thread(new SaveLog(outputFile.getName()));
-                saveLog.start();
-            }
-        };
-        
-        //When User presses Save File
-        EventHandler<ActionEvent> saveAsClick = new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(final ActionEvent e){
-//                FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG File (*.png)", "*.png");
-//                fileChooser.getExtensionFilters().add(extPNG);
-                outputFile = fileChooser.showSaveDialog(stage);
-                WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
-                canvas.snapshot(null, writableImage);
-                         
-                try {
-                    saveFileName = outputFile.getName();          
-                            saveFileExtension = saveFileName.substring(saveFileName.lastIndexOf(".") + 1, outputFile.getName().length());
-                            
-                            if(saveFileExtension.equals(fileExtension)){
-                            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), saveFileExtension, outputFile);
-                            System.out.println(">> SavefileExtension " + saveFileExtension);
-                            }else{
-                              
-                               
-                                saveWarning(stage, ConfirmExit.display("WARNING", "WARNING:\nData loss can happen\nDo you want to save?"));
-                                System.out.println(">> SavefileExtension " + saveFileExtension);
-                            }
-                        autosave.interrupt();
-                            autosave = new Autosave(10, PainT.this);
-                            autosave.start();
-                    } catch (IOException ex) {
-                        System.out.println("Error in saving as");
-                    }
-            }
-        };
-        
-        
-        
-        //When User presses Exit.
-        EventHandler<ActionEvent> exitClick = new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(final ActionEvent e){
-                closeProgram(stage, ConfirmExit.display("PainT", "Do you want to save changes?"));
-            }
-        };
-        
-        
-        menu.about.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                final Stage dialog = new Stage();
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.initOwner(stage);
-                VBox dialogVbox = new VBox(20);
-                dialogVbox.getChildren().add(new Text("About"));
-                dialogVbox.getChildren().add(new Text("\nv1.1\nPaint Application\nShree Software Solutions\n"));
-                Button releaseNotes = new Button("Release Notes");
-                Button ok = new Button("Ok");
-                dialogVbox.getChildren().add(releaseNotes);
-                dialogVbox.getChildren().add(ok);
-                dialogVbox.setAlignment(Pos.CENTER);
-                releaseNotes.setOnAction((ActionEvent e)->{
-                    File releaseFile = new File("D:\\NetBeans Projects\\PainT\\src\\paint\\Release Notes.txt");
-                    try {
-                        Desktop.getDesktop().open(releaseFile);
-                    } catch (IOException ex) {
-                        Logger.getLogger(PainT.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                });
-                ok.setOnAction((ActionEvent e)->{
-                    dialog.close();
-                });
-                Scene dialogScene = new Scene(dialogVbox, 400, 300);
-                dialog.setScene(dialogScene);
-                dialog.show();
-            }
-         });
-        
-        menu.toolHelp.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                final Stage dialog = new Stage();
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.initOwner(stage);
-                VBox dialogVbox = new VBox(20);
-                dialogVbox.getChildren().add(new Text("Tools Help:"));
-                dialogVbox.getChildren().add(new Text("\nFree Line Tool -> Draw a line freely.\nLine Tool -> Draw a straight line.\nRectangle Tool -> Draw a rectangle\nSquare Tool: Draw a square.\nEllipse Tool: Draw an ellipse.\nCircle Tool: Draw a circle.\nEraser Tool: Erase the contents on the canvas freely.\nText Tool: Press anywhere on the canvas and fill out the text on the pop up window.\nColor Grabber: Sample any color from the canvas and changes the stroke to the newly sampled color.\n"));               
-                Button ok = new Button("Ok");
-                dialogVbox.getChildren().add(ok);
-                dialogVbox.setAlignment(Pos.CENTER);
-                
-                ok.setOnAction((ActionEvent e)->{
-                    dialog.close();
-                });
-                Scene dialogScene = new Scene(dialogVbox, 800, 500);
-                dialog.setScene(dialogScene);
-                dialog.show();
-            }
-         });
-        
-     
-        
-        //Listeners for opening, saving and exiting
-        menu.openFile.setOnAction(openClick);
-        menu.saveFile.setOnAction(saveClick);
-        menu.saveAsFile.setOnAction(saveAsClick);
-        menu.exitFile.setOnAction(exitClick);
-    }
-    
-    public void saving(){
-        if(outputFile != null){
-                WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
-                canvas.snapshot(null, writableImage);
-                
-                try{
-                    ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", outputFile);
-                }catch(IOException ex){
-                    System.out.println("Error in saving");
-                }
-                }
-        System.out.println("Autosaved in PainT");
-    }
-    
-    private void closeProgram(Stage stage, String display){
+    public void closeProgram(Stage stage, String display){
         String answer = display;
         switch(answer){
             case "save":
@@ -1535,7 +1197,12 @@ public class PainT extends Application{
                 
     }
 
-    private void saveWarning(Stage stage, String display){
+    /**
+     *
+     * @param stage
+     * @param display
+     */
+    public void saveWarning(Stage stage, String display){
         String answer = display;
         switch(answer){
             case "save":
@@ -1565,50 +1232,11 @@ public class PainT extends Application{
         }
                 
     }
-    //For future purpose.
+ 
     /**
-     * @param args the command line arguments
-    
-    */
-    class ResizableCanvas extends Canvas {
- 
-        public ResizableCanvas() {
-            // Redraw canvas when size changes.
-            widthProperty().addListener(evt -> draw());
-            heightProperty().addListener(evt -> draw());
-        }
- 
-        private void draw() {
-            double width = getWidth();
-            double height = getHeight();
- 
-            GraphicsContext gc = getGraphicsContext2D();
-            gc.clearRect(0, 0, width, height);
- 
-            gc.setStroke(Color.RED);
-            gc.strokeLine(0, 0, width, height);
-            gc.strokeLine(0, height, width, 0);
-        }
- 
-        @Override
-        public boolean isResizable() {
-            return true;
-        }
- 
-        @Override
-        public double prefWidth(double height) {
-            return getWidth();
-        }
- 
-        @Override
-        public double prefHeight(double width) {
-            return getHeight();
-        }
-    }
-    
-   
-    
-    
+     *
+     * @param args
+     */
     public static void main(String[] args) {
 //        PainT paint = new PainT();
     
