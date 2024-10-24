@@ -8,6 +8,8 @@ New Features
 - The software logs which files are opened and saved.  This is handled by thread.
 - "Invent a feature". The application has emoji button and a emoji combo box which has list of emojis that the user can draw on the canvas when clicked. 
 
+![paint4](https://user-images.githubusercontent.com/56151022/159076865-db3ea42b-80c2-4912-b79c-a5ec2509a96a.png)
+
 v1.4
 New Features
 - The code has 3 unit tests. 
@@ -30,7 +32,7 @@ Next Step:
 - Remove hard coded codes.
 - Fix resizing function
 
-
+![paint3](https://user-images.githubusercontent.com/56151022/159076900-88365334-f084-4464-a172-0c096094698b.png)
 
 
 v1.3
@@ -74,6 +76,7 @@ Next Step:
 - Seperate the code into many classes and make it such that each one does one thing.
 
 
+![paint2](https://user-images.githubusercontent.com/56151022/159076910-a9d201d4-9d15-47e5-9146-c8fd4dbdc949.png)
 
 
 v1.2
@@ -106,7 +109,7 @@ Known Issues
 Next Step:
 - Make the drawing tools update as the user drags it.
 
-
+![paint1](https://user-images.githubusercontent.com/56151022/159076920-a6f2bec7-aaf6-465c-bf70-48f0e5c2fcf8.png)
 
 
 v1.1
@@ -138,6 +141,7 @@ Next Steps
 - Figure out a way to incorporate Java Swing in order to make a straight line and draw other shapes because Swing is way better in doing that in doing that.
 
 
+![paint](https://user-images.githubusercontent.com/56151022/159076931-1b88709e-a815-42fa-adf4-1d741d9bd935.png)
 
 
 
