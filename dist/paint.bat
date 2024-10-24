@@ -1,1 +1,0 @@
-java -jar "PainT.jar"
