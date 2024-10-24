@@ -8,6 +8,7 @@ package paint;
 import javafx.event.ActionEvent;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -62,9 +63,11 @@ public class EditTools {
     ToggleButton[] toggleButtons;
     public ToggleGroup toggleGroup = new ToggleGroup();
     public Button zoomIn, zoomOut;
+    public CheckBox autosaveBox;
     
     public GridPane toolsGrid = new GridPane();
     //EditTools
+    
     public void editTool(){
         //Colorpicker and label for stroke
         strokeLabel = new Label("Stroke: ");
@@ -148,6 +151,8 @@ public class EditTools {
         textTool = new ToggleButton("", textView);
         //Color Grabber/Dropper
         colorGrabberTool = new ToggleButton("", dropperView);
+        autosaveBox = new CheckBox("Autosave");
+        autosaveBox.setSelected(false);
         
         eraserTool = new ToggleButton("", eraserView);
         selectTool = new ToggleButton("", selectView);
@@ -206,6 +211,7 @@ public class EditTools {
         editToolsBox.getChildren().add(8, moveTool);
         editToolsBox.getChildren().add(9, zoomOut);
         editToolsBox.getChildren().add(10, zoomIn);
+        editToolsBox.getChildren().add(11, autosaveBox);
     }
     
     public void setToolSize(ImageView iView){

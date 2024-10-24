@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.Stack;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,14 +77,18 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import javax.imageio.ImageIO;
-
+import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author shree
  */
 public class PainT extends Application{
-   
+    
+    public PainT(){
+        
+    }
+    
     //Stores the opened Image so that it can be used while saving.
     private Image tempImage;
     
@@ -101,27 +106,49 @@ public class PainT extends Application{
     FileChooser fileChooser = new FileChooser();
     File outputFile;
     
-  
+    
     
     //ScrollBar
     private ScrollPane scroll = new ScrollPane();
   
-    
+//    DrawingFunc drawingFunc;
     
     
     CreateMenuBar menu = new CreateMenuBar();
     EditTools editTool = new EditTools();
     public StackPane canvasPane = new StackPane();
     
-  
+    Thread autosave;
     
-     int numberOfSides;
+    
+//    public static void addThreadsToPool(){
+//        ScheduledThreadPoolExecutor eventsPool = new ScheduledThreadPoolExecutor(3);
+//        
+//        eventsPool.scheduleAtFixedRate(new Autosave(10, new PainT()), 0, 2, TimeUnit.SECONDS);
+//        
+//        System.out.println("Number of threads " + Thread.activeCount());
+//        
+//        Thread[] listOfThread = new Thread[Thread.activeCount()];
+//        Thread.enumerate(listOfThread);
+//        
+//        for(Thread i : listOfThread){
+//            System.out.println(i.getName());
+//            System.out.println(i.getPriority());
+//        }
+////        
+////        listOfThread[6].setPriority(8);
+//    }
+    
+    
     @Override
     public void start(Stage stage) {
-      
+         
         //Setting up the scene
         Scene scene = new Scene(myLayout, SCREEN_WIDTH, SCREEN_HEIGHT);
         scene.getStylesheets().add((PainT.class.getResource("stylesheet.css").toExternalForm())); //
+        
+        
+       
         
         //Application funcionality and tools
         menu.createMenu(); //Creates the Menu Bar
@@ -132,14 +159,21 @@ public class PainT extends Application{
         ///SmartSaves
         stage.setOnCloseRequest(e->{
             e.consume();
-            closeProgram(stage);
+            closeProgram(stage, ConfirmExit.display("PainT", "Do you want to save changes?"));
         });
-        
+//        drawingFunc = new DrawingFunc(editTool, graphicsContext,canvas , pane, startX, startY, endX, endY, undoStack);
         canvasFunc();
         pane = new Pane(canvas);
         
-        
+      
+         editTool.autosaveBox.setOnAction(e->{
+             if(editTool.autosaveBox.isSelected()){
+                 autosave = new Autosave(10, this);
+            autosave.start();
+             }
+         });
             
+//            addThreadsToPool();
         
         
         canvasPane.setMargin(canvas , new Insets(20,20,20,20));
@@ -262,13 +296,13 @@ public class PainT extends Application{
     
     
     
-    private int startX;
-    private int startY;
-    private int endX;
-    private int endY;
+    public int startX;
+    public int startY;
+    public int endX;
+    public int endY;
     
-    Stack undoStack = new Stack();
-    Stack redoStack = new Stack();
+    public Stack undoStack = new Stack();
+    public Stack redoStack = new Stack();
     
     public void canvasFunc(){
         createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT); //Creates a canvas
@@ -383,6 +417,10 @@ public class PainT extends Application{
             moveTrue = false;
         checkTrue();
     }
+    
+    /**
+     * Shows which tool is selected based on the toggle selects of the buttons.
+     */
     public void checkTrue(){
         if(editTool.pencilTool.isSelected()){
             editTool.toolInfo.setText("Free line selected");
@@ -413,8 +451,13 @@ public class PainT extends Application{
             editTool.toolInfo.setText("No Tool selected");
         }
     }
+    /**
+     * Takes in width and height and creates a canvas
+     * @param width Canvas's width
+     * @param height Canvas's height
+     */
     //Canvas
-    private void createCanvas(double width, double height){
+    public void createCanvas(double width, double height){
         //Creates a canvas with certain width, height.
         canvas = new Canvas();
         canvas.setWidth(width);
@@ -444,6 +487,7 @@ public class PainT extends Application{
     public boolean selectTrue = false;
     public boolean moveTrue = false;
     
+    
     public Pane pane;
     
     public Rectangle rectangle;
@@ -455,6 +499,9 @@ public class PainT extends Application{
     public double[] points;
     public double[] pointsY;
     public int count = 0;
+    
+    ImageView selectedImg;
+     int numberOfSides;
     //Brush
     public void dLine(){
         graphicsContext = canvas.getGraphicsContext2D();
@@ -791,6 +838,8 @@ public class PainT extends Application{
     }
     Line line;
     
+    
+    
     private void paintTriangle(){
         double tempX;
         double tempY;
@@ -828,6 +877,14 @@ public class PainT extends Application{
        graphicsContext.strokeLine(startX, startY, endX, endY);
         
     }
+    
+    /**
+     * Strokes and fills the rectangle using the coordinates.
+     * @param startX is the x-origin
+     * @param startY is the y-origin
+     * @param endX is the width minus the startX
+     * @param endY is the height minus the start Y
+     */
     public void paintRect(){
         double tempX;
         double tempY;
@@ -847,6 +904,14 @@ public class PainT extends Application{
         graphicsContext.strokeRect(startX, startY, tempX, tempY);
         graphicsContext.fillRect(startX, startY, tempX, tempY);
     }
+    
+     /**
+     * Strokes and fills the square using the coordinates.
+     * @param startX is the x-origin
+     * @param startY is the y-origin
+     * @param endX is the width minus the startX
+     * @param endY is the height minus the start Y
+     */
     public void paintSquare(){
         double tempX;
         
@@ -891,6 +956,15 @@ public class PainT extends Application{
         graphicsContext.fillOval(startX - tempRadius, startY - tempRadius, tempX + tempRadius, tempX + tempRadius);
         
     }
+    
+    
+     /**
+     * Selects the part of the image using a rectangle
+     * @param startX is the x-origin
+     * @param startY is the y-origin
+     * @param endX is the width minus the startX
+     * @param endY is the height minus the start Y
+     */
     public void selectRect(){
         double tempX;
         double tempY;
@@ -1012,24 +1086,39 @@ public class PainT extends Application{
     // records relative x and y co-ordinates.
     private class Delta { double x, y; }
   }
+  
+    public String fileName;
+    public String fileExtension;
+    public String saveFileName;
+    public String saveFileExtension;
+    public EventHandler<ActionEvent> saveClick;
     
-    ImageView selectedImg;
+    /**
+     * Handles all the events for open, save and save as. 
+     * @param stage Takes in input the current stage.
+     */
     //EventHandler for menu
     public void eventHandler(Stage stage){
+        FileChooser.ExtensionFilter extJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
+                FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+                FileChooser.ExtensionFilter extGIF = new FileChooser.ExtensionFilter("GIF files (*.gif)", "*.gif");
+                FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*.*");
+                fileChooser.getExtensionFilters().addAll(allFilter, extJPG, extPNG, extGIF);
         //Handles the event when the user presses Open File.
         EventHandler<ActionEvent> openClick = new EventHandler<ActionEvent>() {
             @Override 
             public void handle(final ActionEvent e){
-                FileChooser.ExtensionFilter extJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg,*.jpeg");
-                FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
-                FileChooser.ExtensionFilter extGIF = new FileChooser.ExtensionFilter("TIIF files (*.tiff)", "*.tiff");
-                FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*.*");
-                fileChooser.getExtensionFilters().addAll(allFilter, extJPG, extPNG, extGIF);
+                
+                
                 File file = fileChooser.showOpenDialog(stage);
                 try {
                     
                 BufferedImage bImage = ImageIO.read(file); //Reading the file
+                
                 Image image = SwingFXUtils.toFXImage(bImage, null);
+                fileName = file.getName();          
+                fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1, file.getName().length());
+                System.out.println(">> fileExtension " + fileExtension);
 //                tempImage = image;
                 iView = new ImageView();
                 iView.setImage(image);
@@ -1056,7 +1145,7 @@ public class PainT extends Application{
         };
         
         //saveClick
-        EventHandler<ActionEvent> saveClick = new EventHandler<ActionEvent>(){
+        saveClick = new EventHandler<ActionEvent>(){
             
             @Override
             public void handle(final ActionEvent e){
@@ -1065,28 +1154,45 @@ public class PainT extends Application{
                 canvas.snapshot(null, writableImage);
                 
                 try{
-                    ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", outputFile);
+                    ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), saveFileName, outputFile);
+                    autosave.interrupt();
+                    autosave = new Autosave(10, PainT.this);
+                    autosave.start();
                 }catch(IOException ex){
                     System.out.println("Error in saving");
-                }
+                }  
+                
                 }else{                  
-                    FileChooser.ExtensionFilter extJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg,*.jpeg");
-                    FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
-                    FileChooser.ExtensionFilter extGIF = new FileChooser.ExtensionFilter("GIF files (*.gif)", "*.gif");
-                    fileChooser.getExtensionFilters().addAll(extPNG, extJPG, extGIF);
+//                    FileChooser.ExtensionFilter extJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
+//                    FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+//                    FileChooser.ExtensionFilter extGIF = new FileChooser.ExtensionFilter("GIF files (*.gif)", "*.gif");
+//                    fileChooser.getExtensionFilters().addAll(extPNG, extJPG, extGIF);
                     outputFile = fileChooser.showSaveDialog(stage);
                     WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
                     canvas.snapshot(null, writableImage);
 
                     try {
-
+                            saveFileName = outputFile.getName();          
+                            saveFileExtension = saveFileName.substring(saveFileName.lastIndexOf(".") + 1, outputFile.getName().length());
                             
-                            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", outputFile);
-
+                            if(saveFileExtension.equals(fileExtension)){
+                            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), saveFileExtension, outputFile);
+                            System.out.println(">> SavefileExtension " + saveFileExtension);
+                            }else{
+                              
+                               
+                                saveWarning(stage, ConfirmExit.display("WARNING", "WARNING:\nData loss can happen\nDo you want to save?"));
+                                System.out.println(">> SavefileExtension " + saveFileExtension);
+                            }
+                            if(autosave != null){
+                            autosave.interrupt();
+                            autosave = new Autosave(10, PainT.this);
+                            autosave.start();
+                            }
                         } catch (IOException ex) {
                             System.out.println("Error in saving as");
                         }
-
+                    
                 }
             }
         };
@@ -1095,17 +1201,28 @@ public class PainT extends Application{
         EventHandler<ActionEvent> saveAsClick = new EventHandler<ActionEvent>(){
             @Override
             public void handle(final ActionEvent e){
-                FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG File (*.png)", "*.png");
-                fileChooser.getExtensionFilters().add(extPNG);
+//                FileChooser.ExtensionFilter extPNG = new FileChooser.ExtensionFilter("PNG File (*.png)", "*.png");
+//                fileChooser.getExtensionFilters().add(extPNG);
                 outputFile = fileChooser.showSaveDialog(stage);
                 WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
                 canvas.snapshot(null, writableImage);
                          
                 try {
-                    
-                        
-                        ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", outputFile);
-                        
+                    saveFileName = outputFile.getName();          
+                            saveFileExtension = saveFileName.substring(saveFileName.lastIndexOf(".") + 1, outputFile.getName().length());
+                            
+                            if(saveFileExtension.equals(fileExtension)){
+                            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), saveFileExtension, outputFile);
+                            System.out.println(">> SavefileExtension " + saveFileExtension);
+                            }else{
+                              
+                               
+                                saveWarning(stage, ConfirmExit.display("WARNING", "WARNING:\nData loss can happen\nDo you want to save?"));
+                                System.out.println(">> SavefileExtension " + saveFileExtension);
+                            }
+                        autosave.interrupt();
+                            autosave = new Autosave(10, PainT.this);
+                            autosave.start();
                     } catch (IOException ex) {
                         System.out.println("Error in saving as");
                     }
@@ -1118,7 +1235,7 @@ public class PainT extends Application{
         EventHandler<ActionEvent> exitClick = new EventHandler<ActionEvent>(){
             @Override
             public void handle(final ActionEvent e){
-                closeProgram(stage);
+                closeProgram(stage, ConfirmExit.display("PainT", "Do you want to save changes?"));
             }
         };
         
@@ -1185,8 +1302,22 @@ public class PainT extends Application{
         menu.exitFile.setOnAction(exitClick);
     }
     
-    private void closeProgram(Stage stage){
-        String answer = ConfirmExit.display("PainT", "Do you want to save changes?");
+    public void saving(){
+        if(outputFile != null){
+                WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
+                canvas.snapshot(null, writableImage);
+                
+                try{
+                    ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", outputFile);
+                }catch(IOException ex){
+                    System.out.println("Error in saving");
+                }
+                }
+        System.out.println("Autosaved in PainT");
+    }
+    
+    private void closeProgram(Stage stage, String display){
+        String answer = display;
         switch(answer){
             case "save":
                 if(outputFile != null){
@@ -1216,9 +1347,15 @@ public class PainT extends Application{
                     }
                     
                 }
+                if(autosave != null){
+                    autosave.interrupt();
+                }
                 stage.close();
                 break;
             case "dontSave":
+                if(autosave != null){
+                    autosave.interrupt();
+                }
                 stage.close();
                 break;
             case "cancel":
@@ -1227,6 +1364,36 @@ public class PainT extends Application{
                 
     }
 
+    private void saveWarning(Stage stage, String display){
+        String answer = display;
+        switch(answer){
+            case "save":
+                              
+                    
+                    WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
+                    canvas.snapshot(null, writableImage);
+
+                    try {
+
+
+                           ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), saveFileExtension, outputFile);
+                            
+
+                    } catch (IOException ex) {
+                        System.out.println("Error in saving as");
+                    }
+                    
+                
+//                stage.close();
+                break;
+            case "dontSave":
+//                stage.close();
+                break;
+            case "cancel":
+                break;
+        }
+                
+    }
     //For future purpose.
     /**
      * @param args the command line arguments
@@ -1268,9 +1435,13 @@ public class PainT extends Application{
         }
     }
     
+   
     
     
     public static void main(String[] args) {
+//        PainT paint = new PainT();
+    
+      
         launch(args);
     }
     

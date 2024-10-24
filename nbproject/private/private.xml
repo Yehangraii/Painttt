@@ -5,10 +5,13 @@
         <group>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/EditTools.java</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/ConfirmExit.java</file>
+            <file>file:/D:/NetBeans%20Projects/PainT/src/paint/Autosave.java</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/PainT.java</file>
+            <file>file:/D:/NetBeans%20Projects/PainT/test/paint/PainTTest.java</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/stylesheet.css</file>
             <file>file:/D:/NetBeans%20Projects/PainT/src/paint/CreateMenuBar.java</file>
-            <file>file:/D:/NetBeans%20Projects/PainT/src/paint/TriangleManipulator.java</file>
+            <file>file:/D:/NetBeans%20Projects/PainT/src/paint/DrawingFunc.java</file>
+            <file>file:/D:/NetBeans%20Projects/PainT/test/paint/EditToolsTest.java</file>
         </group>
     </open-files>
 </project-private>
