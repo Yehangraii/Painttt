@@ -1,0 +1,49 @@
+Release Notes:
+
+v1.3
+Features
+- The program can open jpg and png files. Also has an option to view all files. 
+- Can save the opened files on both jpg and png formats.
+- Has BorderPane as the basic layout. Might change it in the future.
+- Can exit successfully. 
+- Has a pencil tool which can draw freely
+- Has a line tool which doesn't work quite well
+- Color Picker and width tool work for pencil
+- Can save and save as
+- The canvas resizes to fit the image being opened
+- Has scrollbar which follows the canvas
+- Has About in Help Menu
+- Can "Smart Save"
+- Can open multiple image type files (.jpg, .png)
+- Has a toolbar which contains colorpicker, width, and pencil
+- Has Keyboard UI controls. So Alt + F will open file menu, Ctrl + S - Save, Ctrl + Shift + S - Save As, Ctrl + O - Open.
+- Has a pencil, line, rectangle, square, ellipse and circle tool
+- Has a color grabber/dropper
+- Has undo functionality
+- Has a Keyboard UI control
+- Can open upto 3 types of file types
+- Can add text to the canvas and image
+- Has triangle as an additional shape
+- Has an eraser tool
+- Has redo functionality
+- Indicates which tool is selected and also indicates if no tool is selected currently
+- The drawing tools update while dragging
+- Has access to release notes in the about
+- Has help about how to use all the tools
+- Can select a peice of image and move it
+- Allows user to input number of sides of polygon, select points in the canvas and draw it
+
+
+Known Issues
+- N/A
+
+Next Step:
+- Seperate the code into many classes and make it such that each one does one thing.
+
+
+
+
+
+
+
+
